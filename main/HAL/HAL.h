@@ -1,7 +1,7 @@
 /*
  * @Date: 2024-08-02 22:32:55
  * @LastEditors: AaronChu
- * @LastEditTime: 2024-08-03 17:07:10
+ * @LastEditTime: 2024-08-04 19:52:24
  */
 #pragma once
 
@@ -16,6 +16,10 @@ extern "C" {
 #include "esp_timer.h"
 #include "driver/gpio.h"
 #include "iot_button.h"
+
+#include "tusb.h"
+#include "esp_private/usb_phy.h"
+#include <inttypes.h>
 
 #define PHASE_U_GPIO 15
 #define PHASE_V_GPIO 16
@@ -38,10 +42,21 @@ extern "C" {
 #define LEDC_CHAN_2 2
 #endif
 
+#define REPORT_ID    1
+#define DIAL_R       0xC8
+#define DIAL_L       0x38
+#define DIAL_PRESS   0x01
+#define DIAL_RELEASE 0x00
+#define DIAL_R_F     0x14
+#define DIAL_L_F     0xEC
+
 
 
 void foc_init();
 void foc1_init();
+
+void surface_dial_report(uint8_t key);
+void surface_dial_init();
 
 #ifdef __cplusplus
 }

@@ -64,13 +64,19 @@ void motor_init(void)
 /*Button press callback*/
 static void button_press_cb(void *arg, void *data)
 {
-    mode++;
-    if (mode >= MOTOR_MAX_MODES) {
-        mode = MOTOR_UNBOUND_NO_DETENTS;
-    }
-    foc_knob_change_mode(foc_knob_handle, mode);
-    ESP_LOGI(TAG, "mode: %d", mode);
+    // mode++;
+    // if (mode >= MOTOR_MAX_MODES) {
+    //     mode = MOTOR_UNBOUND_NO_DETENTS;
+    // }
+    // foc_knob_change_mode(foc_knob_handle, mode);
+    // ESP_LOGI(TAG, "mode: %d", mode);
+    surface_dial_report(DIAL_PRESS);
     motor_shake = true;
+}
+
+static void button_press_up_cb(void *arg, void *data)
+{
+  surface_dial_report(DIAL_RELEASE);
 }
 
 static void foc_knob_inc_cb(void *arg, void *data)
@@ -78,6 +84,8 @@ static void foc_knob_inc_cb(void *arg, void *data)
     /*!< Do not printf here */
     foc_knob_state_t state;
     foc_knob_get_state(arg, &state);
+   surface_dial_report(DIAL_R);
+    // ESP_LOGI(TAG, "foc_knob_inc_cb: position: %" PRId32 "\n", state.position);
 }
 
 static void foc_knob_dec_cb(void *arg, void *data)
@@ -85,6 +93,9 @@ static void foc_knob_dec_cb(void *arg, void *data)
     /*!< Do not printf here */
     foc_knob_state_t state;
     foc_knob_get_state(arg, &state);
+     surface_dial_report(DIAL_L);
+    
+    // ESP_LOGI(TAG, "foc_knob_dec_cb: position: %" PRId32 "\n", state.position);
 }
 
 static void foc_knob_h_lim_cb(void *arg, void *data)
@@ -127,7 +138,7 @@ static void motor_task(void *arg)
     while (1) {
         motor.loopFOC();
         if (motor_shake) {
-            torque = motor_shake_func(2, 4);
+            torque = motor_shake_func(3, 4);
         } else {
             torque = foc_knob_run(foc_knob_handle, motor.shaft_velocity, motor.shaft_angle);
         }
@@ -151,6 +162,7 @@ void foc_init(void)
 
     button_handle_t btn =  iot_button_create(&btn_config);
     iot_button_register_cb(btn, BUTTON_PRESS_DOWN, button_press_cb, NULL);
+    iot_button_register_cb(btn, BUTTON_PRESS_UP, button_press_up_cb, NULL);
     motor_init();
 
     foc_knob_config_t cfg = {
@@ -167,7 +179,7 @@ void foc_init(void)
     foc_knob_register_cb(foc_knob_handle, FOC_KNOB_DEC, foc_knob_dec_cb, NULL);
     foc_knob_register_cb(foc_knob_handle, FOC_KNOB_H_LIM, foc_knob_h_lim_cb, NULL);
     foc_knob_register_cb(foc_knob_handle, FOC_KNOB_L_LIM, foc_knob_l_lim_cb, NULL);
-   
+   foc_knob_change_mode(foc_knob_handle, MOTOR_UNBOUND_FINE_DETENTS);
 
     xTaskCreate(motor_task, "motor_task", 4096, NULL, 5, NULL);
 }
