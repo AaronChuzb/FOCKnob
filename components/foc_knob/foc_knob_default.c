@@ -21,6 +21,7 @@ static const foc_knob_param_t unbound_coarse_detents[] = {
     {0, 0, 10 * PI / 180, 1.2, 0, 1.1, "Unbounded\nStrong detents"},
 };
 
+
 static const foc_knob_param_t bound_no_detents[] = {
     {360, 180, 1 * PI / 180, 0, 1, 1.1, "Bounded\nNo detents"},
 };

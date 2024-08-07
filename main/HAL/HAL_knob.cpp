@@ -57,7 +57,7 @@ void motor_init(void)
 
     motor.useMonitoring(Serial);
     motor.init();                                        // initialize motor
-    motor.initFOC();                                     // align sensor and start FOC
+    motor.initFOC(0.7, CCW);                                     // align sensor and start FOC
     ESP_LOGI(TAG, "Motor Initialize Successfully");
 }
 

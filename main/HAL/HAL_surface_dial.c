@@ -1,13 +1,11 @@
 /*
  * @Date: 2024-08-04 19:39:00
  * @LastEditors: AaronChu
- * @LastEditTime: 2024-08-04 19:59:17
+ * @LastEditTime: 2024-08-06 21:38:43
  */
 #include "HAL.h"
 
 #define TAG "FOC_Knob"
-
-
 
 /* A combination of interfaces must have a unique product id, since PC will save device driver after the first plug.
  * Same VID/PID with different interface e.g MSC (first), then CDC (later) will possibly cause system error on PC.
@@ -238,7 +236,8 @@ uint16_t tud_hid_get_report_cb(uint8_t instance, uint8_t report_id, hid_report_t
   (void)report_type;
   (void)buffer;
   (void)reqlen;
-  return 0;
+ESP_LOGI(TAG, "bao1 %d", instance);
+  return buffer;
 }
 
 void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_t report_type, uint8_t const *buffer, uint16_t bufsize)
@@ -248,4 +247,10 @@ void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_
   (void)report_type;
   (void)buffer;
   (void)bufsize;
+  ESP_LOGI(TAG, "bao %d", instance);
 }
+
+// void tud_hid_report_complete_cb(uint8_t instance, uint8_t const *report, uint16_t len)
+// {
+//   ESP_LOGI(TAG, "bao %d", report);
+// }
